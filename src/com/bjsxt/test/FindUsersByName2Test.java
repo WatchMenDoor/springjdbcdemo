@@ -11,7 +11,7 @@ public class FindUsersByName2Test {
     public static void main(String[] args) {
         ApplicationContext applicationContext =new ClassPathXmlApplicationContext("applicationContext.xml");
         UsersService usersService = (UsersService)applicationContext.getBean("usersService");
-        List<Users> list = usersService.findUsersByName2("itbz-sxt4");
+        List<Users> list = usersService.findUsersByName2("suibian");
         list.forEach(System.out::println);
     }
 }
