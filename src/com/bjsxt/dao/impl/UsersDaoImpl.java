@@ -2,9 +2,7 @@ package com.bjsxt.dao.impl;
 
 import com.bjsxt.dao.UsersDao;
 import com.bjsxt.pojo.Users;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,7 +19,7 @@ public class UsersDaoImpl implements UsersDao {
         this.jdbcTemplate = jdbcTemplate;
     }
     /**
-     * 添加用户
+     * 添加单个用户
      * @param users
      * @return
      */
@@ -54,6 +52,11 @@ public class UsersDaoImpl implements UsersDao {
         return this.jdbcTemplate.batchUpdate(sql,setter);
     }
 
+    /**
+     * 查询单个数据
+     * @param userid
+     * @return
+     */
     @Override
     public Users selectUsersById(int userid) {
         String sql = "select * from users where userid = ?";
@@ -68,5 +71,28 @@ public class UsersDaoImpl implements UsersDao {
             }
         });
         return users;
+    }
+    //查询用户返回多条数据
+    @Override
+    public List<Users> selectUsersByName(String username) {
+        String sql = "select * from users where username = ?";
+        Object[] param = new Object[]{username};
+        return this.jdbcTemplate.query(sql, param, new RowMapper<Users>() {
+                    @Override
+                    public Users mapRow(ResultSet resultSet, int i) throws SQLException {
+                        Users users = new Users();
+                        users.setUserid(resultSet.getInt("userid"));
+                        users.setUsername(resultSet.getString("username"));
+                        users.setUsersex(resultSet.getString("usersex"));
+                        return users;
+                    }
+        });
+    }
+    //查询用户返回多条数据简化版
+    @Override
+    public List<Users> selectUsersByName2(String username) {
+        String sql = "select * from users where username = ?";
+        Object[] param = new Object[]{username};
+        return this.jdbcTemplate.query(sql,param,new BeanPropertyRowMapper<>(Users.class));
     }
 }
